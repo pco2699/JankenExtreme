@@ -1,0 +1,12 @@
+.stage, .board, .total, .battle__result {
+    display: none;
+}
+
+.hand {
+    width:120px;
+    height: 120px;
+}
+
+.selected {
+    border: 5px solid red;
+}
