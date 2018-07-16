@@ -13,8 +13,10 @@ $(() => {
   const $battleMyhandPa = $('.battle__myhand-pa')
   const $battleMyhandImages = $('.battle__myhand img')
   const $battleNext = $('.battle__next')
+  const $battleRound = $('.battle__round')
   const $battleResult = $('.battle__result')
   const $battlePcHand = $('.battle__pchand')
+  const $battleStatus = $('.battle__status')
 
   const $result = $('.result')
   const $resultRank = $('.result__rank')
@@ -156,11 +158,6 @@ $(() => {
       $boardDraw.text(state.currentRoundResult.draw)
       $boardGameNum.text(state.currentRoundResult.gameNum)
       $boardWinningPercentage.text(state.currentRoundResult.winningPercentage)
-      $totalWin.text(state.win)
-      $totalLose.text(state.lose)
-      $totalDraw.text(state.draw)
-      $totalGameNum.text(state.gameNum)
-      $totalWinningPercentage.text(state.winningPercentage)
     },
     getPcHand() {
       return new Promise(resolve => {
@@ -181,11 +178,12 @@ $(() => {
       methods.setStage(Stage.battle)
       methods.nextBattle()
       $battleMyhandImages.removeClass('selected')
-      $board.show()
-      $total.show()
+      // $board.show()
+      // $total.show()
     },
     async startJanken(myHand) {
       const pcHand = await this.getPcHand()
+      $battleStatus.text('ポン！')
       return Janken.judgment(myHand, pcHand)
     },
     toResult(e) {
@@ -207,6 +205,7 @@ $(() => {
     nextBattle() {
       state.currentRound += 1
       $boardRound.text(`${state.currentRound}回戦`)
+      $battleRound.text(`${state.currentRound}回戦`)
       state.jankenImages = jankenImages[Object.keys(jankenImages)[state.currentRound - 1]]
       $battleMyhandGu.data('hand', Hands.gu).attr('src', state.jankenImages[Hands.gu])
       $battleMyhandChoki.data('hand', Hands.choki).attr('src', state.jankenImages[Hands.choki])
@@ -223,21 +222,23 @@ $(() => {
     },
     async janken(e) {
       $battleMyhandImages.removeClass('selected')
+      $battleMyhandImages.addClass('unselected')
       const $target = $(e.currentTarget)
       $target.addClass('selected')
       const result = await methods.startJanken($target.data('hand'))
       if (result === Janken.win) {
         state.currentRoundResult.win += 1
-        methods.flashToBoard('勝ち')
+        methods.flashToBoard('YOU WIN!!!')
       }
       if (result === Janken.lose) {
         state.currentRoundResult.lose += 1
-        methods.flashToBoard('負け')
+        methods.flashToBoard('YOU WIN!!!')
       }
       if (result === Janken.draw) {
         state.currentRoundResult.draw += 1
         methods.flashToBoard('あいこ')
       }
+      $board.show()
     }
   }
 
@@ -265,6 +266,38 @@ $(() => {
       return _
     }
   }
+
+  // じゃんけん開始時メッセージ
+  const beginMessages = {
+
+  }
+
+  // 結果メッセージ
+  // ジャンケンのイメージ
+  const resultMessages = {
+    get janken() {
+      const _ = {}
+      _[Janken.win] = 'YOU WIN !!!'
+      _[Janken.draw] = 'DRAW !!!'
+      _[Janken.lose] = 'YOU LOSE...'
+      return _
+    },
+    get pokemon() {
+      const _ = {}
+      _[Janken.win] = 'こうかはばつぐんだ！'
+      _[Janken.draw] = 'こうかはいまひとつのようだ'
+      _[Janken.lose] = 'こうかがないみたいだ...'
+      return _
+    },
+    get animal() {
+      const _ = {}
+      _[Hands.gu] = 'assets/images/animal_kaeru.png'
+      _[Hands.choki] = 'assets/images/animal_namekuji.png'
+      _[Hands.pa] = 'assets/images/animal_habu.png'
+      return _
+    }
+  }
+
 
   $titleStart.on('click', methods.start)
   $battleMyhandImages.on('click', methods.janken)
