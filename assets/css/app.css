@@ -1,3 +1,10 @@
+/* -------------------------
+   デザイン：浅野未央
+   CSSコーディング：pco2699
+
+   https://xd.adobe.com/view/e529c760-3ac5-4996-7a7a-ddef84f06648-9318/
+   ------------------------- */
+
 html {
     background-color: black;
 }
@@ -83,6 +90,10 @@ html {
 }
 
 .board__winningPercentage {
+}
+
+.board__score {
+
 }
 
 
