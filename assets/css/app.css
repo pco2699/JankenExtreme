@@ -55,11 +55,11 @@ html {
     bottom: 0;
     margin: 50px auto;
     width: 300px;
-    height: 300px;
+    height: 350px;
     z-index: 999;
 
     background-color: #FFFFFF;
-    opacity: 0.8;
+    opacity: 0.95;
     text-align: center;
 }
 
@@ -77,22 +77,98 @@ html {
     font-weight: bold;
 }
 
-.board__result, .board__percentage, .board__win {
-    display: block
-}
-
 .board__result {
     margin: 20px auto;
     font-size: 34px;
+    font-weight: bold;
 }
 
-.board__win__count {
+.board__result.win {
+    color: #f70d1b;
 }
 
-.board__winningPercentage {
+.board__result.draw {
+    color: black;
+}
+
+.board__result.lose {
+    color: #203e5b;
+}
+
+.next__stage, .back__toTitle {
+    position: absolute;
+    background-color: #1c5ff3;
+    border-radius: 20px;
+    color: #FFFFFF;
+    top: 420px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0 auto;
+    padding: 10px 10px;
+    width: 120px;
+    height: 18px;
+    z-index: 999;
+
+    text-align: center;
+}
+
+
+.board__win, .board__percentage {
+    margin: 10px auto;
 }
 
 .board__score {
+    width: 52px;
+    font-size: 12px;
+    padding: 2px 5px 2px 5px;
+    margin: 2px auto 20px;
+    border-radius: 15px;
+    background-color: #1c5ff3;
+    color: #fff;
+}
+/* -------------------------
+   最終結果画面
+   ------------------------- */
+.result {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 50px auto;
+    width: 300px;
+    height: 350px;
+    z-index: 999;
+
+    background-color: #FFFFFF;
+    opacity: 0.95;
+    text-align: center;
+}
+
+.result__image {
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    width: 200px;
+}
+
+.result__show {
+    position: absolute;
+    background-color: #f41a23;
+    border-radius: 20px;
+    color: #FFFFFF;
+    top: 420px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0 auto;
+    padding: 10px;
+    width: 120px;
+    height: 18px;
+    z-index: 999;
+
+    text-align: center;
 
 }
 
@@ -122,12 +198,11 @@ html {
 }
 
 /*ステージ切り替えのために非表示に*/
-.stage, .board, .total, .battle__result {
+.stage, .board, .total, .battle__result, .next__stage, .back__toTitle, .result__show, .result {
     display: none;
 }
 
 .button {
-
     border-radius: 40px;
     padding: 10px 15px 10px 15px;
     background-color: #44a2d3;

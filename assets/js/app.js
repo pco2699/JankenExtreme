@@ -12,30 +12,25 @@ $(() => {
   const $battleMyhandChoki = $('.battle__myhand-choki');
   const $battleMyhandPa = $('.battle__myhand-pa');
   const $battleMyhandImages = $('.battle__myhand img');
-  const $battleNext = $('.battle__next');
   const $battleRound = $('.battle__round');
-  const $battleResult = $('.battle__result');
   const $battlePcHand = $('.battle__pchand');
   const $battleStatus = $('.battle__status');
 
   const $result = $('.result');
-  const $resultRank = $('.result__rank');
+  const $resultShow = $('.result__show');
+  const $resultImage = $('.result__image');
+  const $resultWin = $('.result__win__count');
+  const $resultPercentage = $('.result__winningPercentage');
 
   const $board = $('.board');
   const $boardRound = $('.board__round');
   const $boardResult = $('.board__result');
   const $boardWin = $('.board__win__count');
-  const $boardLose = $('.board__lose');
-  const $boardDraw = $('.board__draw');
-  const $boardGameNum = $('.board__gameNum');
   const $boardWinningPercentage = $('.board__winningPercentage');
-  const $total = $('.total');
-  const $totalWin = $('.total__win');
-  const $totalLose = $('.total__lose');
-  const $totalDraw = $('.total__draw');
-  const $totalGameNum = $('.total__gameNum');
-  const $totalWinningPercentage = $('.total__winningPercentage');
-  const $totalToTitle = $('.total__toTitle');
+  const $nextStage = $('.next__stage');
+
+  const $backToTitle = $('.back__toTitle');
+
 
   // Stage, Hands, Jankenはenumっぽくしてみたけど型がないとやっぱり厳しい・・・
   // ただ、方針として値を直に扱わないようにはなった。
@@ -76,8 +71,9 @@ $(() => {
     _currentRound: 0,
     jankenImages: null,
     resultMessages: null,
+    beginMessages: null,
     stage: null,
-    get roundNum () {
+    get roundNum() {
       return this._roundResults.length
     },
     set currentRound(val) {
@@ -155,10 +151,8 @@ $(() => {
     flashToBoard(resultText) {
       $boardResult.text(resultText);
       $boardWin.text(state.currentRoundResult.win);
-      $boardLose.text(state.currentRoundResult.lose);
-      $boardDraw.text(state.currentRoundResult.draw);
-      $boardGameNum.text(state.currentRoundResult.gameNum);
-      $boardWinningPercentage.text(state.currentRoundResult.winningPercentage)
+      $boardWinningPercentage.text(state.winningPercentage);
+      $boardResult.addClass()
     },
     getPcHand() {
       return new Promise(resolve => {
@@ -179,8 +173,6 @@ $(() => {
       methods.setStage(Stage.battle);
       methods.nextBattle();
       $battleMyhandImages.removeClass('selected')
-      // $board.show()
-      // $total.show()
     },
     async startJanken(myHand) {
       const pcHand = await this.getPcHand();
@@ -189,19 +181,20 @@ $(() => {
     },
     toResult(e) {
       e.preventDefault();
-      if (state.gameNum < 10) {
-        alert('累計10ゲーム以上行って下さい。');
-        return
-      }
       $board.hide();
       methods.setStage(Stage.result);
-      let rank = 'グリーン';
+      let resultImage = 'assets/images/award_green.png';
       if (state.winningPercentage >= 50) {
-        rank = 'ゴールド'
+        resultImage = 'assets/images/award_gold.png'
       } else if (state.winningPercentage >= 40) {
-        rank = 'シルバー'
+        resultImage = 'assets/images/award_silver.png'
       }
-      $resultRank.text(rank)
+      $resultShow.hide();
+      $backToTitle.show();
+
+      $resultImage.attr('src', resultImage);
+      $resultWin.text(state.win);
+      $resultPercentage.text(state.winningPercentage);
     },
     nextBattle() {
       state.currentRound += 1;
@@ -209,18 +202,19 @@ $(() => {
       $battleRound.text(`${state.currentRound}回戦`);
       state.jankenImages = jankenImages[Object.keys(jankenImages)[state.currentRound - 1]];
       state.resultMessages = resultMessages[Object.keys(resultMessages)[state.currentRound - 1]];
+      state.beginMessages = beginMessages[Object.keys(beginMessages)[state.currentRound - 1]];
       $battleMyhandGu.data('hand', Hands.gu).attr('src', state.jankenImages[Hands.gu]);
       $battleMyhandChoki.data('hand', Hands.choki).attr('src', state.jankenImages[Hands.choki]);
       $battleMyhandPa.data('hand', Hands.pa).attr('src', state.jankenImages[Hands.pa]);
       $battlePcHand.attr('src', 'assets/images/mark_question.png');
       this.flashToBoard('');
-      if (state.currentRound >= state.roundNum) {
-        $battleNext.hide();
-        $battleResult.show()
-      } else {
-        $battleNext.show();
-        $battleResult.hide()
-      }
+
+      $board.hide();
+      $nextStage.hide();
+      $battleMyhandImages.removeClass('selected');
+      $battleMyhandImages.removeClass('unselected');
+
+      $battleStatus.text(state.beginMessages)
     },
     async janken(e) {
       $battleMyhandImages.removeClass('selected');
@@ -230,17 +224,34 @@ $(() => {
       const result = await methods.startJanken($target.data('hand'));
       if (result === Janken.win) {
         state.currentRoundResult.win += 1;
-        methods.flashToBoard(state.resultMessages[Janken.win])
+        methods.flashToBoard(state.resultMessages[Janken.win]);
+        $boardResult.addClass("win")
       }
       if (result === Janken.lose) {
         state.currentRoundResult.lose += 1;
-        methods.flashToBoard(state.resultMessages[Janken.lose])
+        methods.flashToBoard(state.resultMessages[Janken.lose]);
+        $boardResult.addClass("lose")
       }
       if (result === Janken.draw) {
         state.currentRoundResult.draw += 1;
-        methods.flashToBoard(state.resultMessages[Janken.draw])
+        methods.flashToBoard(state.resultMessages[Janken.draw]);
+        $boardResult.addClass("draw")
       }
-      $board.show()
+
+      await methods.sleep(2000);
+      $board.show();
+      if (state.currentRound < state.roundNum) {
+        $nextStage.show();
+      }
+      else {
+        $resultShow.show();
+      }
+    },
+    sleep(ms){
+      return new Promise(resolve => setTimeout(resolve, ms));
+    },
+    reload(){
+      location.reload(true);
     }
   };
 
@@ -271,6 +282,15 @@ $(() => {
 
   // じゃんけん開始時メッセージ
   const beginMessages = {
+    get janken(){
+      return 'じゃんけん'
+    },
+    get pokemon(){
+      return 'こうかばつぐんを狙え！'
+    },
+    get animal(){
+      return 'いきのびろ！'
+    }
 
   };
 
@@ -293,9 +313,9 @@ $(() => {
     },
     get animal() {
       const _ = {};
-      _[Hands.gu] = 'assets/images/animal_kaeru.png';
-      _[Hands.choki] = 'assets/images/animal_namekuji.png';
-      _[Hands.pa] = 'assets/images/animal_habu.png';
+      _[Janken.win] = 'YOU SURVIVE!';
+      _[Janken.draw] = 'BOTH DEAD...';
+      _[Janken.lose] = 'YOU DEAD...';
       return _
     }
   };
@@ -303,14 +323,12 @@ $(() => {
 
   $titleStart.on('click', methods.start);
   $battleMyhandImages.on('click', methods.janken);
-  $battleNext.on('click', (e) => {
+  $resultShow.on('click', methods.toResult);
+  $backToTitle.on('click', methods.reload);
+  $nextStage.on('click', (e) => {
     e.preventDefault();
+    methods.setStage(Stage.battle);
     methods.nextBattle()
-  });
-  $battleResult.on('click', methods.toResult);
-  $totalToTitle.on('click', (e) => {
-    e.preventDefault();
-    methods.setStage(Stage.title)
   });
   methods.setStage(Stage.title)
 });
