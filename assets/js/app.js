@@ -1,41 +1,41 @@
 $(() => {
-  'use strict'
+  'use strict';
   // 最初にjQueryのオブジェクトを全部作成
   // 大した負荷ではないが都度オブジェクトにすると時間がかかるため。
   // jQueryのオブジェクトの変数は$で始めている
-  const $stage = $('#stage')
-  const $title = $('.title')
-  const $titleStart = $('.title__start')
+  const $stage = $('#stage');
+  const $title = $('.title');
+  const $titleStart = $('.title__start');
 
-  const $battle = $('.battle')
-  const $battleMyhandGu = $('.battle__myhand-gu')
-  const $battleMyhandChoki = $('.battle__myhand-choki')
-  const $battleMyhandPa = $('.battle__myhand-pa')
-  const $battleMyhandImages = $('.battle__myhand img')
-  const $battleNext = $('.battle__next')
-  const $battleRound = $('.battle__round')
-  const $battleResult = $('.battle__result')
-  const $battlePcHand = $('.battle__pchand')
-  const $battleStatus = $('.battle__status')
+  const $battle = $('.battle');
+  const $battleMyhandGu = $('.battle__myhand-gu');
+  const $battleMyhandChoki = $('.battle__myhand-choki');
+  const $battleMyhandPa = $('.battle__myhand-pa');
+  const $battleMyhandImages = $('.battle__myhand img');
+  const $battleNext = $('.battle__next');
+  const $battleRound = $('.battle__round');
+  const $battleResult = $('.battle__result');
+  const $battlePcHand = $('.battle__pchand');
+  const $battleStatus = $('.battle__status');
 
-  const $result = $('.result')
-  const $resultRank = $('.result__rank')
+  const $result = $('.result');
+  const $resultRank = $('.result__rank');
 
-  const $board = $('.board')
-  const $boardRound = $('.board__round')
-  const $boardResult = $('.board__result')
-  const $boardWin = $('.board__win')
-  const $boardLose = $('.board__lose')
-  const $boardDraw = $('.board__draw')
-  const $boardGameNum = $('.board__gameNum')
-  const $boardWinningPercentage = $('.board__winningPercentage')
-  const $total = $('.total')
-  const $totalWin = $('.total__win')
-  const $totalLose = $('.total__lose')
-  const $totalDraw = $('.total__draw')
-  const $totalGameNum = $('.total__gameNum')
-  const $totalWinningPercentage = $('.total__winningPercentage')
-  const $totalToTitle = $('.total__toTitle')
+  const $board = $('.board');
+  const $boardRound = $('.board__round');
+  const $boardResult = $('.board__result');
+  const $boardWin = $('.board__win__count');
+  const $boardLose = $('.board__lose');
+  const $boardDraw = $('.board__draw');
+  const $boardGameNum = $('.board__gameNum');
+  const $boardWinningPercentage = $('.board__winningPercentage');
+  const $total = $('.total');
+  const $totalWin = $('.total__win');
+  const $totalLose = $('.total__lose');
+  const $totalDraw = $('.total__draw');
+  const $totalGameNum = $('.total__gameNum');
+  const $totalWinningPercentage = $('.total__winningPercentage');
+  const $totalToTitle = $('.total__toTitle');
 
   // Stage, Hands, Jankenはenumっぽくしてみたけど型がないとやっぱり厳しい・・・
   // ただ、方針として値を直に扱わないようにはなった。
@@ -43,7 +43,7 @@ $(() => {
     title: $title,
     battle: $battle,
     result: $result
-  })
+  });
 
   const Hands = Object.freeze({
     gu: 0,
@@ -52,7 +52,7 @@ $(() => {
     get random() {
       return Math.trunc(Math.random() * 3)
     }
-  })
+  });
 
   const Janken = Object.freeze({
     win: 2,
@@ -67,7 +67,7 @@ $(() => {
     judgment(me, pc) {
       return (me - pc + 3) % 3
     }
-  })
+  });
   // ------------------------------------------------------------
 
   // Vueでいうところのdataとcomputedまざったような・・・・
@@ -75,6 +75,7 @@ $(() => {
     _roundResults: [],
     _currentRound: 0,
     jankenImages: null,
+    resultMessages: null,
     stage: null,
     get roundNum () {
       return this._roundResults.length
@@ -113,10 +114,10 @@ $(() => {
       }, 0)
     },
     init(roundNum = 3) {
-      this.stage = null
-      this._roundResults = []
-      this._currentRound = 0
-      this.jankenImages = null
+      this.stage = null;
+      this._roundResults = [];
+      this._currentRound = 0;
+      this.jankenImages = null;
       for (let i = 0; i < roundNum; i++) {
         // 結果のオブジェクト
         let result = {
@@ -129,11 +130,11 @@ $(() => {
           get winningPercentage() {
             return Math.trunc(this.win * 1000 / this.gameNum) / 10
           }
-        }
+        };
         this._roundResults.push(result)
       }
     }
-  }
+  };
   // DOMの操作は全部ここに集中させている
   // stateのsetでやるのも面白かったけど、ちょっとやってみたらコードが読みにくくなったので。
   const methods = {
@@ -143,58 +144,58 @@ $(() => {
       }
       Object.keys(Stage).forEach((v) => {
         if (target === Stage[v]) {
-          Stage[v].show()
+          Stage[v].show();
           return
         }
         Stage[v].hide()
-      })
-      $stage.append(target.show())
+      });
+      $stage.append(target.show());
       state.stage = target
     },
     flashToBoard(resultText) {
-      $boardResult.text(resultText)
-      $boardWin.text(state.currentRoundResult.win)
-      $boardLose.text(state.currentRoundResult.lose)
-      $boardDraw.text(state.currentRoundResult.draw)
-      $boardGameNum.text(state.currentRoundResult.gameNum)
+      $boardResult.text(resultText);
+      $boardWin.text(state.currentRoundResult.win);
+      $boardLose.text(state.currentRoundResult.lose);
+      $boardDraw.text(state.currentRoundResult.draw);
+      $boardGameNum.text(state.currentRoundResult.gameNum);
       $boardWinningPercentage.text(state.currentRoundResult.winningPercentage)
     },
     getPcHand() {
       return new Promise(resolve => {
         const id = setInterval(() => {
           $battlePcHand.attr('src', state.jankenImages[Hands.random])
-        }, 10)
+        }, 10);
         setTimeout(() => {
-          clearInterval(id)
-          const pcHand = Hands.random
-          $battlePcHand.attr('src', state.jankenImages[pcHand])
+          clearInterval(id);
+          const pcHand = Hands.random;
+          $battlePcHand.attr('src', state.jankenImages[pcHand]);
           resolve(pcHand)
         }, 1000)
       })
     },
     start (e) {
-      e.preventDefault()
-      state.init()
-      methods.setStage(Stage.battle)
-      methods.nextBattle()
+      e.preventDefault();
+      state.init();
+      methods.setStage(Stage.battle);
+      methods.nextBattle();
       $battleMyhandImages.removeClass('selected')
       // $board.show()
       // $total.show()
     },
     async startJanken(myHand) {
-      const pcHand = await this.getPcHand()
-      $battleStatus.text('ポン！')
+      const pcHand = await this.getPcHand();
+      $battleStatus.text('ポン！');
       return Janken.judgment(myHand, pcHand)
     },
     toResult(e) {
-      e.preventDefault()
+      e.preventDefault();
       if (state.gameNum < 10) {
-        alert('累計10ゲーム以上行って下さい。')
+        alert('累計10ゲーム以上行って下さい。');
         return
       }
-      $board.hide()
-      methods.setStage(Stage.result)
-      let rank = 'グリーン'
+      $board.hide();
+      methods.setStage(Stage.result);
+      let rank = 'グリーン';
       if (state.winningPercentage >= 50) {
         rank = 'ゴールド'
       } else if (state.winningPercentage >= 40) {
@@ -203,112 +204,113 @@ $(() => {
       $resultRank.text(rank)
     },
     nextBattle() {
-      state.currentRound += 1
-      $boardRound.text(`${state.currentRound}回戦`)
-      $battleRound.text(`${state.currentRound}回戦`)
-      state.jankenImages = jankenImages[Object.keys(jankenImages)[state.currentRound - 1]]
-      $battleMyhandGu.data('hand', Hands.gu).attr('src', state.jankenImages[Hands.gu])
-      $battleMyhandChoki.data('hand', Hands.choki).attr('src', state.jankenImages[Hands.choki])
-      $battleMyhandPa.data('hand', Hands.pa).attr('src', state.jankenImages[Hands.pa])
-      $battlePcHand.attr('src', 'assets/images/mark_question.png')
-      this.flashToBoard('')
+      state.currentRound += 1;
+      $boardRound.text(`${state.currentRound}回戦`);
+      $battleRound.text(`${state.currentRound}回戦`);
+      state.jankenImages = jankenImages[Object.keys(jankenImages)[state.currentRound - 1]];
+      state.resultMessages = resultMessages[Object.keys(resultMessages)[state.currentRound - 1]];
+      $battleMyhandGu.data('hand', Hands.gu).attr('src', state.jankenImages[Hands.gu]);
+      $battleMyhandChoki.data('hand', Hands.choki).attr('src', state.jankenImages[Hands.choki]);
+      $battleMyhandPa.data('hand', Hands.pa).attr('src', state.jankenImages[Hands.pa]);
+      $battlePcHand.attr('src', 'assets/images/mark_question.png');
+      this.flashToBoard('');
       if (state.currentRound >= state.roundNum) {
-        $battleNext.hide()
+        $battleNext.hide();
         $battleResult.show()
       } else {
-        $battleNext.show()
+        $battleNext.show();
         $battleResult.hide()
       }
     },
     async janken(e) {
-      $battleMyhandImages.removeClass('selected')
-      $battleMyhandImages.addClass('unselected')
-      const $target = $(e.currentTarget)
-      $target.addClass('selected')
-      const result = await methods.startJanken($target.data('hand'))
+      $battleMyhandImages.removeClass('selected');
+      $battleMyhandImages.addClass('unselected');
+      const $target = $(e.currentTarget);
+      $target.addClass('selected');
+      const result = await methods.startJanken($target.data('hand'));
       if (result === Janken.win) {
-        state.currentRoundResult.win += 1
-        methods.flashToBoard('YOU WIN!!!')
+        state.currentRoundResult.win += 1;
+        methods.flashToBoard(state.resultMessages[Janken.win])
       }
       if (result === Janken.lose) {
-        state.currentRoundResult.lose += 1
-        methods.flashToBoard('YOU WIN!!!')
+        state.currentRoundResult.lose += 1;
+        methods.flashToBoard(state.resultMessages[Janken.lose])
       }
       if (result === Janken.draw) {
-        state.currentRoundResult.draw += 1
-        methods.flashToBoard('あいこ')
+        state.currentRoundResult.draw += 1;
+        methods.flashToBoard(state.resultMessages[Janken.draw])
       }
       $board.show()
     }
-  }
+  };
 
   // ジャンケンのイメージ
   const jankenImages = {
     get janken() {
-      const _ = {}
-      _[Hands.gu] = 'assets/images/janken_gu.png'
-      _[Hands.choki] = 'assets/images/janken_cho.png'
-      _[Hands.pa] = 'assets/images/janken_pa.png'
+      const _ = {};
+      _[Hands.gu] = 'assets/images/janken_gu.png';
+      _[Hands.choki] = 'assets/images/janken_cho.png';
+      _[Hands.pa] = 'assets/images/janken_pa.png';
       return _
     },
     get pokemon() {
-      const _ = {}
-      _[Hands.gu] = 'assets/images/pokemon_fushigidane.png'
-      _[Hands.choki] = 'assets/images/pokemon_zenigame.png'
-      _[Hands.pa] = 'assets/images/pokemon_hitokage.png'
+      const _ = {};
+      _[Hands.gu] = 'assets/images/pokemon_fushigidane.png';
+      _[Hands.choki] = 'assets/images/pokemon_zenigame.png';
+      _[Hands.pa] = 'assets/images/pokemon_hitokage.png';
       return _
     },
     get animal() {
-      const _ = {}
-      _[Hands.gu] = 'assets/images/animal_kaeru.png'
-      _[Hands.choki] = 'assets/images/animal_namekuji.png'
-      _[Hands.pa] = 'assets/images/animal_habu.png'
+      const _ = {};
+      _[Hands.gu] = 'assets/images/animal_kaeru.png';
+      _[Hands.choki] = 'assets/images/animal_namekuji.png';
+      _[Hands.pa] = 'assets/images/animal_habu.png';
       return _
     }
-  }
+  };
 
   // じゃんけん開始時メッセージ
   const beginMessages = {
 
-  }
+  };
 
   // 結果メッセージ
   // ジャンケンのイメージ
   const resultMessages = {
     get janken() {
-      const _ = {}
-      _[Janken.win] = 'YOU WIN !!!'
-      _[Janken.draw] = 'DRAW !!!'
-      _[Janken.lose] = 'YOU LOSE...'
+      const _ = {};
+      _[Janken.win] = 'YOU WIN !!!';
+      _[Janken.draw] = 'DRAW !!!';
+      _[Janken.lose] = 'YOU LOSE...';
       return _
     },
     get pokemon() {
-      const _ = {}
-      _[Janken.win] = 'こうかはばつぐんだ！'
-      _[Janken.draw] = 'こうかはいまひとつのようだ'
-      _[Janken.lose] = 'こうかがないみたいだ...'
+      const _ = {};
+      _[Janken.win] = 'こうかはばつぐんだ！';
+      _[Janken.draw] = 'こうかはいまひとつのようだ';
+      _[Janken.lose] = 'こうかがないみたいだ...';
       return _
     },
     get animal() {
-      const _ = {}
-      _[Hands.gu] = 'assets/images/animal_kaeru.png'
-      _[Hands.choki] = 'assets/images/animal_namekuji.png'
-      _[Hands.pa] = 'assets/images/animal_habu.png'
+      const _ = {};
+      _[Hands.gu] = 'assets/images/animal_kaeru.png';
+      _[Hands.choki] = 'assets/images/animal_namekuji.png';
+      _[Hands.pa] = 'assets/images/animal_habu.png';
       return _
     }
-  }
+  };
 
 
-  $titleStart.on('click', methods.start)
-  $battleMyhandImages.on('click', methods.janken)
+  $titleStart.on('click', methods.start);
+  $battleMyhandImages.on('click', methods.janken);
   $battleNext.on('click', (e) => {
-    e.preventDefault()
+    e.preventDefault();
     methods.nextBattle()
-  })
-  $battleResult.on('click', methods.toResult)
+  });
+  $battleResult.on('click', methods.toResult);
   $totalToTitle.on('click', (e) => {
-    e.preventDefault()
+    e.preventDefault();
     methods.setStage(Stage.title)
-  })
+  });
   methods.setStage(Stage.title)
-})
+});

@@ -2,6 +2,9 @@ html {
     background-color: black;
 }
 
+/* -------------------------
+   じゃんけんのスタート画面
+   ------------------------- */
 .title {
     text-align: center;
 }
@@ -12,17 +15,9 @@ html {
     font-weight: bold;
 }
 
-.button {
-    border-radius: 40px;
-    padding: 10px 15px 10px 15px;
-    background-color: #44a2d3;
-    color: #FFFFFF;
-    font-size: 26px;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-
+/* -------------------------
+   じゃんけんで手を選ぶ画面
+   ------------------------- */
 .battle__pchand {
     margin: 10px 0;
 }
@@ -41,19 +36,10 @@ html {
     font-size: 38px;
 }
 
-.battle {
-    text-align: center;
-}
-
-.stage, .board, .total, .battle__result {
-    display: none;
-}
-
-.hand {
-    width:120px;
-    height: 120px;
-}
-
+/* -------------------------
+   じゃんけんの途中結果を出す画面
+   ------------------------- */
+/*結果を表示するボード*/
 .board {
     position: absolute;
     top: 0;
@@ -70,10 +56,74 @@ html {
     text-align: center;
 }
 
+/*~回戦*/
+.board__round {
+    width: 100px;
+    margin: 10px auto;
+    display: block;
+    border-radius: 40px;
+    padding: 8px 10px 8px 10px;
+    background-color: #44a2d3;
+    color: #FFFFFF;
+    font-size: 13px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.board__result, .board__percentage, .board__win {
+    display: block
+}
+
+.board__result {
+    margin: 20px auto;
+    font-size: 34px;
+}
+
+.board__win__count {
+}
+
+.board__winningPercentage {
+}
+
+
+/* -------------------------
+   汎用的な部品
+   ------------------------- */
+/*じゃんけんの手*/
+.hand {
+    width:120px;
+    height: 120px;
+}
+
+/*選択されなかった手*/
 .unselected {
     filter:brightness(60%);
 }
 
+/*選択された手*/
 .selected {
     filter:brightness(100%);
 }
+
+/*じゃんけんを表示する部品*/
+.battle {
+    text-align: center;
+}
+
+/*ステージ切り替えのために非表示に*/
+.stage, .board, .total, .battle__result {
+    display: none;
+}
+
+.button {
+
+    border-radius: 40px;
+    padding: 10px 15px 10px 15px;
+    background-color: #44a2d3;
+    color: #FFFFFF;
+    font-size: 26px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+
